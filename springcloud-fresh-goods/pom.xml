@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>springcloud-fresh-user</artifactId>
+	<artifactId>springcloud-fresh-goods</artifactId>
 	<packaging>jar</packaging>
 
-	<name>springcloud-fresh-user</name>
+	<name>springcloud-fresh-goods</name>
 
 	<parent>
 		<groupId>com.yc</groupId>
@@ -20,15 +20,15 @@
 
 	<dependencies>
 	</dependencies>
-	
+
 	<build>
-		<finalName>springcloud-fresh-user</finalName>
+		<finalName>springcloud-fresh-goods</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>com.yc.fresh.user.FreshUserApplication</mainClass>
+					<mainClass>com.yc.fresh.goods.FreshGoodsApplication</mainClass>
 				</configuration>
 				<executions>
 					<execution>
