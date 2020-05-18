@@ -12,7 +12,7 @@ spring:
     name: fresh-user
   cloud:
     config:
-      uri: http://127.0.0.1:5656/  #从配置服务器中读取配置文件
+      uri: http://127.0.0.1:5566/  #从配置服务器中读取配置文件
       label: master   #从主分支中读取
       name: springcloud-fresh-user   #文件前缀
       profile: dev #{name}-{profile}.yml

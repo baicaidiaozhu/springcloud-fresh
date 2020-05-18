@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 注意：namespace中的值必须是对应接口的全路径，SQL语句中的id值必须是这个接口中对应方法名称 -->
+<mapper namespace="com.yc.fresh.mapper.IGoodsInfoMapper">
+	<!--首页数据查询，查询每种类型的最新四个商品的信息  -->
+	<select id="finds" resultType="GoodsInfo">
+		select gno,gname,price,pics,tno from goodsinfo gf1 where  4>
+		(select count(gno) from goodsinfo gf2 where gf1.tno=gf2.tno and gf1.gno &lt; gf2.gno) order by gf1.tno asc,gf1.gno desc
+	</select>
+	
+	<select id="findBygno" parameterType="int" resultType="GoodsInfo">
+		select gno,gname,tno,price,intro,pics,unit,weight,descr,balance from goodsinfo where gno=#{gno}
+	</select>
+	
+	<select id="findByPage" resultType="GoodsInfo" parameterType="map">
+		select gno,gname,tno,price,intro,pics,unit,weight,descr,balance from goodsinfo where tno=#{tno} order by gno asc limit #{page},#{rows}
+	</select>
+	
+	<select id="total" resultType="int" parameterType="int">
+		select count(gno) from goodsinfo where tno=#{_parameter} 
+	</select>
+	
+	<update id="updateStore">
+		update goodsinfo set
+		<trim prefix=" balance=balance-case" suffix="end">
+			<foreach collection="array" item="item">
+				where gno=(select gno from cartinfo where cno=#{item}) then (select num from cartinfo where cno=#{item})
+			</foreach>
+		</trim>
+		<where>
+			gno in(select gno from cartinfo where cno in
+			<foreach collection="array" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</where>
+	</update>
+</mapper>
