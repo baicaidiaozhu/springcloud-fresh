@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 注意：namespace中的值必须是对应接口的全路径，SQL语句中的id值必须是这个接口中对应方法名称 -->
+<mapper namespace="com.yc.fresh.mapper.IAddressMapper">
+	<insert id="addAddr" parameterType="map">
+		insert into addrinfo values(0,#{mno},#{name},#{tel},#{province},#{city},#{area},#{addr},#{flag},1)
+	</insert>
+	
+	<select id="findaddr"  parameterType="int" resultType="AddrInfo">
+		select ano,mno,name,tel,province,city,area,addr,flag,status from addrinfo where mno=#{mno};
+	</select>
+	
+	<update id="setDefault"  parameterType="map">
+		update addrinfo a1,addrinfo a2 set a1.flag=1 , a2.flag=0 where  a1.mno=#{mno} and a1.ano=#{ano} and a2.ano not in(#{ano})
+	</update>
+</mapper>

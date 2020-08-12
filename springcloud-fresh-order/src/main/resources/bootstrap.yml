@@ -4,7 +4,7 @@ spring:
  
 ---
 server:
-  port: 9827
+  port: 9527
      
 spring:
   profiles: dev-9527

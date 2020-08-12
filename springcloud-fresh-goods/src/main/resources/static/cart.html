@@ -31,7 +31,7 @@
                     <span> | </span>
                     <a href="cart.html">我的购物车</a>
                     <span> | </span>
-                    <a href="order.html">我的订单</a>
+                    <a href="/order/order.html">我的订单</a>
                 </div>
             </div>
     	</div>
@@ -69,7 +69,7 @@
         </div>
     	<div class="cart_list_td clearfix" id="cart_list_ul">
        		<ul v-for="(item, index) in carts" :id=" 'g_'+index">
-        		<li class="col01"><input type="checkbox" checked :index="index"></li>
+        		<li class="col01"><input type="checkbox" checked :index="index" :cno="item.cno"></li>
             	<li class="col02"><img :src="item.pics"></li>
                 <li class="col03">{{ item.gname }}<br><em>{{ item.price }}元/{{ item.unit }}</em></li>
                 <li class="col04">{{ item.weight }}</li>
@@ -231,16 +231,16 @@
    		}
    	}
    	
-   	function gotoPay(){
+   	function gotoPay() {
    		var cnos = [];
-   		$("#cart_list_ul  input[type='checkbox']: checked").each(function(index,item) {
+   		$("#cart_list_ul input[type='checkbox']:checked").each(function(index, item) {
    			cnos.push($(this).attr("cno"));
    		})
-   		if(cnos.length <= 0){
+   		if (cnos.length <= 0) {
    			alert("请选择需要结账的商品...");
    			return;
    		}
-   		location.href="/order/pay.html#"+cnos.join(";");
+   		location.href="/order/pay.html#" + cnos.join(",")
    	}
    </script>
 </body>

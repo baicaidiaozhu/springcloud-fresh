@@ -10,53 +10,112 @@
 </head>
 
 <body>
-	<!-- 头部  -->
+<div id="login_info">
 	<div class="header_con">
     	<div class="header">
     		<div class="welcome fl">欢迎来到天天生鲜</div>
-    		<div class="fr">
+            <div class="fr">
             	<div class="login_info fl">
-                	欢迎：<em>y c</em>
+                	<span v-if="nickName != '' ">欢迎：<em >{{nickName}}</em></span>
+                	<!--  <em v-else>{{nickName}}</em>-->
                 </div>
                 <div class="login_btn fl">
-                	<a href="login.html">登录</a>
+                	<a v-if="nickName == ''" href="/user/login.html">登录</a>
                     <span> | </span>
-                    <a href="register.html">注册</a>
+                    <a href="/user/register.html">注册</a>
                 </div>
-            	 <div class="user_link fl">
-                    <span> | </span>
+                <div class="user_link fl">
+                 	<span> | </span>
                     <a href="user.html">用户中心</a>
                     <span> | </span>
                     <a href="cart.html">我的购物车</a>
                     <span> | </span>
                     <a href="order.html">我的订单</a>
-           		 </div> 
-             </div>   
+                </div>
+            </div>
     	</div>
     </div>
-    
-    <!-- 搜素框 -->
-    <div class="search_bar clearfix">
-        <a href="index.html" class="logo fl"><img src="images/logo.png"></a>
-        <div class="search_con fl">
-            <input type="text" placeholder="搜素商品" name="" class="input_text fl">
-            <input type="button" value="搜索" class="input_btn fr">
+
+
+	<!-- 搜索框-->
+	<div class="search_bar clearfix">
+    	<a href="index.html" class="logo fl"><img src="images/logo.png"></a>
+    	<div class="search_con fl">
+        	<form>
+            	<input type="text" placeholder="搜索商品" class="input_text fl" name="key_words">
+                <input type="button" value="搜索" class="input_btn fr">
+            </form>
+        </div>
+    	<div class="guest_cart fr" >
+            <a href="cart.html" class="cart_name fl">我的购物车</a>
+            <div class="goods_count fl" id="show_count">{{goodsCount}}</div>
         </div>
     </div>
-    
-     <!-- 收货地址 -->
-    <h3 class="common_title">确认收货地址</h3>
-
+</div>
+   
+<!-- 收货地址 -->
+<h3 class="common_title">确认收货地址</h3>
+<div id="addr_app">
 	<div class="common_list_con clearfix">
 		<input type="hidden" id="receive_addr" />
 		<dl id="addr_list">
 			<dt>寄送到：</dt>
-			<dd><span>邮寄到 </span>北京市 海淀区 东北旺西路8号中关村软件园 （李思 收） 159****0775 </dd>
-			<dd class="selectedAddr"><span>邮寄到 </span>北京市 海淀区 东北旺西路8号中关村软件园 （李思 收） 159****0775</dd>
+			<dd v-for="item in addrs" v-if="item.flag == 0" :ano="item.ano" onclick="setDefault('+item.ano+',this)"><span>邮寄到 </span>{{item.province}} {{item.city}} {{item.area}} {{item.addr}} ({{item.name}} 收) &nbsp; {{item.tel}}</dd>
+			<dd v-else class="selectedAddr" :ano="item.ano" onclick="setDefault('+item.ano+',this)"><span>邮寄到 </span>{{item.province}} {{item.city}} {{item.area}} {{item.addr}} ({{item.name}} 收) &nbsp; {{item.tel}}</dd>
 		</dl>
 		<a href="javascript:showAddrDiv()" class="edit_site">编辑收货地址</a>
 	</div>
 	
+	
+   	<!-- 支付方式 -->	
+    <h3 class="common_title">支付方式</h3>	
+	<div class="common_list_con clearfix">
+		<div class="pay_style_con clearfix">
+			<input type="radio" name="pay_style" checked>
+			<label class="cash">货到付款</label>
+			<input type="radio" name="pay_style">
+			<label class="weixin">微信支付</label>
+			<input type="radio" name="pay_style">
+			<label class="zhifubao"></label>
+			<input type="radio" name="pay_style">
+			<label class="bank">银行卡支付</label>
+		</div>
+	</div>
+    
+   	<!-- 商品列表 -->
+    <h3 class="common_title">商品列表</h3>
+	<div class="common_list_con clearfix" id="order_list">
+		<ul class="goods_list_th clearfix">
+			<li class="col01">商品名称</li>
+			<li class="col02">商品单位</li>
+			<li class="col03">商品价格</li>
+			<li class="col04">数量</li>
+			<li class="col05">小计</li>		
+		</ul>
+		
+		<ul class="goods_list_td clearfix" v-for="(item, index) in goods" id="order_show">
+			<li class="col01" :id="item.gno">{{index +1}}</li>			
+			<li class="col02"><img :src="item.pics"></li>
+			<li class="col03">{{item.gname}}</li>
+			<li class="col04">{{item.weight}} / {{item.unit}}</li>
+			<li class="col05">{{item.price}}元</li>
+			<li class="col06">{{item.num}}</li>
+			<li class="col07">{{item.num * item.price}}元</li>	
+		</ul>
+	</div>
+     
+    <!-- 金额结算 -->	
+    <h3 class="common_title">总金额结算</h3>
+	<div class="common_list_con clearfix">
+		<div class="settle_con">
+			<div class="total_goods_count">共<em id="total_count">{{totalCount}}</em>件商品，总金额<b id="total_price">{{totalPrice}} 元</b></div>
+			<div class="transit">运费：<b>10元</b></div>
+			<div class="total_pay">实付款：<b id="real_price">{{totalPrice + 10}} 元</b></div>
+		</div>
+	</div>
+</div>
+
+
 	<div id="addr_div">
 		<img src="images/close.png" title="关闭" onclick="hiddenDiv()" />
 		<form id="myform">
@@ -89,70 +148,14 @@
 			</ul>
 		</form>
 	</div>
-    
-   	<!-- 支付方式 -->	
-    <h3 class="common_title">支付方式</h3>	
-	<div class="common_list_con clearfix">
-		<div class="pay_style_con clearfix">
-			<input type="radio" name="pay_style" checked>
-			<label class="cash">货到付款</label>
-			<input type="radio" name="pay_style">
-			<label class="weixin">微信支付</label>
-			<input type="radio" name="pay_style">
-			<label class="zhifubao"></label>
-			<input type="radio" name="pay_style">
-			<label class="bank">银行卡支付</label>
-		</div>
-	</div>
-    
-   	<!-- 商品列表 -->
-    <h3 class="common_title">商品列表</h3>
-	<div class="common_list_con clearfix" id="order_list">
-		<ul class="goods_list_th clearfix">
-			<li class="col01">商品名称</li>
-			<li class="col02">商品单位</li>
-			<li class="col03">商品价格</li>
-			<li class="col04">数量</li>
-			<li class="col05">小计</li>		
-		</ul>
-		
-		<ul class="goods_list_td clearfix">
-			<li class="col01">1</li>			
-			<li class="col02"><img src="images/goods/goods012.jpg"></li>
-			<li class="col03">奇异果</li>
-			<li class="col04">500g</li>
-			<li class="col05">25.80元</li>
-			<li class="col06">1</li>
-			<li class="col07">25.80元</li>	
-		</ul>
-		<ul class="goods_list_td clearfix">
-			<li class="col01">2</li>			
-			<li class="col02"><img src="images/goods/goods003.jpg"></li>
-			<li class="col03">大兴大棚草莓</li>
-			<li class="col04">500g</li>
-			<li class="col05">16.80元</li>
-			<li class="col06">1</li>
-			<li class="col07">16.80元</li>	
-		</ul>
-
-	</div>
-     
-    <!-- 金额结算 -->	
-    <h3 class="common_title">总金额结算</h3>
-	<div class="common_list_con clearfix">
-		<div class="settle_con">
-			<div class="total_goods_count">共<em id="total_count"></em>件商品，总金额<b id="total_price"></b></div>
-			<div class="transit">运费：<b>10元</b></div>
-			<div class="total_pay">实付款：<b id="real_price"></b></div>
-		</div>
-	</div>
+	
 	<div class="order_submit clearfix">
 		<a href="javascript:;" id="order_btn">提交订单</a>
 	</div>	
     
     <div class="popup_con">
 		<div class="popup">
-			<p>订单提交成功！</p>
+			<p>下单成功，请支付....</p>
 		</div>
 		
 		<div class="mask"></div>
@@ -172,13 +175,68 @@
     
 <script src="js/jquery-3.4.1.min.js"></script>
 <script src="js/addr.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/axios.js"></script>
+<script src="js/check.js"></script>
+<script src="js/qs.js"></script>
 <script type="text/javascript">
+var addr_app;
+var cnos;
 $(function(){
+	cnos = location.hash.replace("#","");
+	if(cnos == ""){
+		location.href="/view/cart.html";
+		return;
+	}
+	
+	addr_app = new Vue({
+		el:"#addr_app",
+		data: {
+			addrs: [],
+			goods: [],
+			totalCount: 0,
+			totalPrice: 0
+		},
+		mounted:function(){
+			axios.all([findByAddr(), findByCno()]).then(axios.spread((fn1,fn2) =>{
+				this.addrs = fn1.data;
+				this.goods = fn2.data;
+				if(!fn2.data || fn2.data.length <=0){//说明用户给定的购物车号有问题，可能是自己胡乱拼接的
+					location.href="/view/cart.html";
+					return;
+				}
+				
+				this.goods.forEach((item,index) => {
+					this.totalPrice+= item.num * item.price;
+					this.totalCount+= item.num;
+				})
+				
+			}))
+		},
+		updated: function(){
+			this.$nextTick(function(){
+				bindEvent();
+			})
+		}
+	})
+})
+
+//查询收货地址
+function findByAddr(){
+	return axios.get("addr/findaddr",{params: {}})
+}
+
+function findByCno(){
+	return axios.post("order/findCart",qs.stringify({cnos:cnos}))
+}
+
+function bindEvent(){
+	$("#addr_list>dd").unbind();
 	$("#addr_list>dd").click(function(){
 		$("#addr_list>dd").removeClass("selectedAddr");
 		$(this).addClass("selectedAddr");
 	});
-})
+}
 function showAddrDiv() {
 	$("#myform")[0].reset();
 	$("#addr_div").css("display", "block");
@@ -188,19 +246,99 @@ function hiddenDiv(){
 	$("#addr_div").css("display", "none");
 }
 
+function setDefault(ano,thas){
+	$.post("addr/setDefault",{ano:ano},function(data){
+		if(data>0){
+			$("#addr_list>dd").removeClass("selectedAddr");
+			$(thas).addClass("selectedAddr");
+		}else{
+			alert("网络故障，请重试....")
+		}
+	})
+}
+
 function addAddr() {
+	var name=$.trim($("#addr_name").val());
+	var tel=$.trim($("#addr_tel").val());
+	var province=$.trim($("#province").val());
+	var city=$.trim($("#city").val());
+	var area=$.trim($("#area").val());
+	var addr=$.trim($("#addr_addr").val());
 	
+	if(name == "" || tel =="" || addr=="" || province=='--请选择省份--' || city=='--请选择城市--' || area=='--请选择地区--'){
+		return;
+	}
+	
+	var obj = $("#myform").serialize();
+	var addObj={name:name,tel:tel,province:province,city:city,area:area,addr:addr};
+	var addObj1={name:name,tel:tel,province:province,city:city,area:area,addr:addr,flag:0};
+	
+	$.post("addr/addAddr",addObj,function(data){
+		if(data>0){
+			addr_app.$data.addrs.push(addObj1);
+			$("#myform")[0].reset();
+			$("#addr_div").css("display", "none");;
+			alert("添加成功");
+		}else{
+			alert("信息有误,添加失败");
+		}
+	},"text");
 }
 
 $('#order_btn').click(function() {
-	$('.popup_con').fadeIn('fast', function() {
-		setTimeout(function(){
-			$('.popup_con').fadeOut('fast',function(){
-				window.location.href = 'index.html';
-			});	
-		},3000)
+	var ano = $("#addr_list dd[class='selectedAddr']").attr("ano");
+	var gno=[];
+	var num=[];
+	var prices=[];
+	
+	if (ano == "") {
+		alert("请选择收货地址...");
+		return;
+	}
+	if (addr_app.$data.goods.length <= 0) {
+		location.href="/view/cart.html";
+	}
+
+	var price = addr_app.$data.totalPrice + 10;
+	
+	$("#order_show .col01").each(function(index,item){
+		gno[gno.length]=$(this).attr("id");
+		num[num.length]=$(this).parent().find(".col06").html();
+		prices[prices.length]=$(this).parent().find(".col07").html().replace("元","");
+	})
+	
+	$.post("order/pay", {
+		cno:cnos,
+		ano:ano, 
+		gno:gno.join(","),
+		num:num.join(","),
+		price:prices.join(","),
+		totalPrice: price}, data => {
+		if (data.code == 101) {
+			alert("您输入的信息不完整...");
+			return;
+		}
 		
-	});
+		/*if (data.code == 200){
+			$('.popup_con').fadeIn('fast', function() {
+				setTimeout(function(){
+					$('.popup_con').fadeOut('fast',function(){
+						location.href = 'alipay/topay/' + data.msg +"/" + price;
+					});	
+				}, 20000)
+			});*/
+			if (data.code == 200){
+			$('.popup_con').fadeIn('fast', function() {
+				setTimeout(function(){
+					$('.popup_con').fadeOut('fast',function(){
+						location.href="apli/pay/"+data.msg+"/"+price;
+					});	
+				}, 2000)
+			});
+		} else {
+			alert("下单失败，请稍后重试...");
+		}
+	}, "json");
 });
 </script>
 </body>

@@ -1,6 +1,7 @@
 package com.yc.fresh.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yc.fresh.entity.AddrInfo;
 import com.yc.fresh.entity.MenberInfo;
+import com.yc.fresh.service.IAddressBiz;
 import com.yc.fresh.service.ICartInfoService;
 import com.yc.fresh.util.ResponseUtil;
 
@@ -19,6 +22,9 @@ import com.yc.fresh.util.ResponseUtil;
 public class MemberInfoController {
 	@Autowired
 	private ICartInfoService cartInfoService;
+	
+	@Autowired
+	private IAddressBiz addressBiz;
 	/**
 	 * 检验用户有没有登录
 	 * @param session
@@ -34,6 +40,10 @@ public class MemberInfoController {
 		map.put("member", obj);
 		MenberInfo mf = (MenberInfo) obj;
 		session.setAttribute("cartnum", cartInfoService.findAll(mf.getMno()));
+		
+		List<AddrInfo> list=addressBiz.findaddr(mf.getMno());
+		session.setAttribute("address", list.size());
+		
 		map.put("carts", cartInfoService.findByMno(mf.getMno()));
 		return  ResponseUtil.responseMap(200, null, map);
 	}

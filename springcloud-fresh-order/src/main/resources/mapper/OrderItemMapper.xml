@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 注意：namespace中的值必须是对应接口的全路径，SQL语句中的id值必须是这个接口中对应方法名称 -->
+<mapper namespace="com.yc.fresh.mapper.IOrderItemMapper">
+	<select id="findOrderItem" parameterType="map" resultMap="OrderItem" >
+		select gname,g.price,priceAll,g.pics,unit,weight,DATE_FORMAT(odate,'%Y-%m-%e %H:%i')odate,g.gno,i.nums,o.ono,o.status from goodsinfo g,orderinfo o,orderiteminfo i ,addrinfo a 
+		where a.ano=o.ano and o.ono=i.ono and g.gno=i.gno 
+		<foreach collection="list" open=" and g.gno in(" separator="," item="item" close=") ">
+			#{item}
+		</foreach>
+		and mno=#{mno} order by odate desc;
+	</select>
+	
+	<resultMap type="OrderInfo" id="OrderItem" autoMapping="true">
+		<id property="ono" column="ono"/>
+		
+		<!-- 一对多的时候，即需要注入一个集合中
+			注意：	集合注值的类型名通过ofType指定，而一对一 关联注值是的类型名通过JavaType指定
+		-->
+		<collection property="orderItem" ofType="OrderItemInfo" autoMapping="true">
+			<id property="ino" column="ino"/>
+			<association property="goodsinfo" javaType="GoodsInfo" autoMapping="true">
+				<id property="gno" column="gno"/>
+			</association>
+		</collection>
+	</resultMap>
+	
+	<select id="findgno" parameterType="int" resultType="int">
+		select i.gno from orderiteminfo i ,addrinfo a,orderinfo o where a.ano=o.ano and o.ono=i.ono and mno=#{mno};
+	</select>
+	
+	<update id="update" parameterType="string">
+		update orderinfo set status=1 where ono=#{_parameter}
+	</update>
+	
+	<update id="updateItem" parameterType="string">
+		update orderiteminfo set status=1 where ono=#{_parameter}
+	</update>
+</mapper>
